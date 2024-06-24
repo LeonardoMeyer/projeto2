@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost Woods Park Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="login.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    
+  <div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card login-box p-4">
+        <div class="text-center mb-4">
+            <img src="img/LOGOLOST.svg" alt="Lost Woods Park Logo" class="logo">
+        </div>
+        <form id="cadastro">
+            Nome: <input type="text" name="nome" id="nome" placeholder="digite seu nome" required><br>
+            Email: <input type="email" name="email" id="email" placeholder="digite seu e-mail" required><br>
+            CPF: <input type="text" name="cpf" id="cpf" maxlength="14" placeholder="digite seu CPF" required><br>
+            Telefone: <input type="text" name="telefone" id="telefone" maxlength="15" placeholder="digite seu telefone" required><br>
+            Data de Nascimento: <input type="date" name="nascimento" id="nascimento"><br>
+            Senha: <input type="password" name="senha" id="senha" required><br>
+            Confirma Senha: <input type="password" name="senha2" id="senha2" required><br>
+    
+            <button type="submit">Salvar</button>
+        </form>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+      document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('cadastro');
+            const cpfInput = document.getElementById('cpf');
+            const telefoneInput = document.getElementById('telefone');
+
+            // Função para formatar CPF
+            cpfInput.addEventListener('input', () => {
+                let cpf = cpfInput.value.replace(/\D/g, '');
+                cpf = cpf.replace(/^(\d{3})(\d)/, '$1.$2');
+                cpf = cpf.replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
+                cpf = cpf.replace(/\.(\d{3})(\d)/, '.$1-$2');
+                cpfInput.value = cpf;
+            });
+
+            // Função para formatar Telefone
+            telefoneInput.addEventListener('input', () => {
+                let telefone = telefoneInput.value.replace(/\D/g, '');
+                telefone = telefone.replace(/^(\d{2})(\d)/g, '($1) $2');
+                telefone = telefone.replace(/(\d)(\d{4})$/, '$1-$2');
+                telefoneInput.value = telefone;
+            });
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const nome = document.getElementById('nome').value;
+                const email = document.getElementById('email').value;
+                let cpf = cpfInput.value;
+                const telefone = telefoneInput.value;
+                const nascimento = document.getElementById('nascimento').value;
+                const senha1 = document.getElementById('senha').value;
+                const senha2 = document.getElementById('senha2').value;
+
+                if (senha1 !== senha2) {
+                    alert('Senhas não conferem!');
+                    throw new Error('Senhas não conferem!');
+                }
+
+                // Removendo caracteres de formatação do CPF e Telefone (pontos, traços, parênteses, espaços)
+                cpf = cpf.replace(/\D/g, '');
+                const telefoneSemFormatacao = telefone.replace(/\D/g, '');
+
+                const apiUrl = 'http://127.0.0.1:5000/api/clientes';
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: "POST",
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            nome: nome,
+                            email: email,
+                            password: senha1,
+                            cpf: cpf,
+                            telefone: telefoneSemFormatacao,
+                            nascimento: nascimento ? new Date(nascimento).toISOString() : null
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        alert('Usuário criado com sucesso!');
+                    } else {
+                        alert(`Erro: ${data.error}`);
+                    }
+
+                    console.log(data);
+                } catch (error) {
+                    console.error('Erro ao criar usuário:', error);
+                    alert('Erro ao criar usuário.');
+                }
+            });
+        });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
