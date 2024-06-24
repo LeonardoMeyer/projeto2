@@ -1,0 +1,73 @@
+1) O que é uma API REST?
+uma api rest é um tilo de arquitetura de softwere que define outros recursos de rede. em uma api rest os recurso sao identificados por url's
+
+2) Quais são os principais métodos HTTP utilizados em uma API REST? Resuma brevemente quando cada
+um deles deve ser utilizado.
+get recupara uma lita de recursos
+post cria um novo recurso
+put atualiza um recurso existente
+patch atualiza parcialmente um recurso que ja existe
+delete eleta o recurso
+
+3) Explique a diferença entre POST e PATCH em termos de atualização de recursos em uma API REST.
+o post é usado para criar o recurso  o patch é usao para atualizar parcialmente um recuro que ja existe
+
+4) O que são códigos de status HTTP e por que são importantes em uma API REST ? Cite 3 exemplos.
+sao codicos numericos que inicam o resultado de uma solicitacao http. 200 ok quer dizer que foi bem sucedido, 404 not found inica que nao foi encontrado e 500 internal server error quer dizer que ocorreu um erro interno no servidor
+
+5) O que é CORS e como você pode lidar com isso ao construir uma API REST?
+é um mecanismo que permite um site web faça solicitacoe para um dominio diferente do seu, para lidar com cors em uma api rest, voce po0de configurar o servidor para incluir headers de resposta que permitam as solicitaçoes cros origin
+
+6) Como você implementaria a autenticação em uma API REST no Express.js?
+const express = require('express');
+const router = express.Router();
+const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
+const { exceptionHandler } = require('../utils/handlers');
+const { generateAccessToken, authenticateToken } = require('../utils/auth');
+const uploadSingle = require('../utils/SingleUpload');
+const path = require('path');
+
+const prisma = new PrismaClient({ errorFormat: "minimal" });
+
+router.get('/', async (req, res, next) => {
+  try {
+    const users = await prisma.user.findMany();
+    res.json(users);
+  } catch (error) {
+    exceptionHandler(error, res);
+  }
+});
+
+
+7) O que são middlewares no Express.js e como eles são úteis em uma API REST?
+sao funçoes como req, res (req requisita o client e o Res é a resposta do servidor, eles sao uteis pq permitem que voce execute tarefas especificas, como autenticaçao, logging, cqaching, etc antes de procesar a solicitacao
+
+8) O que é JWT e como ele é usado na autenticação de API?
+é um token de autenticaçao que contem a informacao do usuario, ele é usado de api para verificar a identidade do usuario, quando o usuario se autntifica o servior emite um jwt que é enviado ao cliente, o cliente envia o jwt em caa solicitacao para aautenticar a solicitacao
+
+9) Explique a diferença entre autenticação e autorização em uma API REST.
+a autenticaçao é o processo de verificar a identiade do usuario enquanto a aurorizaçao é o processor e verificar se o usuario tem permicao para aesar aquele conteuo
+
+
+10) O que é ORM e qual é o seu propósito principal no desenvolvimento de sistemas com banco de dados ?
+é uma tecnica ed programacao que permite mapear objetos de uma linguagem de programacao para tabelas do banco de dados, seu proposito é tornar maiseficiente e flexivel a interaçao com o banco de dados racional
+
+11) Quais são as principais vantagens do uso do Prisma ORM em comparação com abordagens tradicionais
+de acesso a banco de dados?
+o Prisma proporciona tipagem segura para operações de banco de dados, facilitando a prevenção de erros de digitação. Sua sintaxe expressiva simplifica consultas, tornando o código mais legivel e facil de manter, suporta multiplos bancos de dados relacionais, permitindo transiçoes suaves sem a necessidade de modificar o codigo da aplicaçao
+12) Como você realiza consultas simples usando o Prisma ORM? Demonstre com um exemplo completo
+importe o modelo necessário do Prisma
+use os metodos fornecidos pelo Prisma para realizar a consulta desejada
+manipule os resultados conforme necessario
+
+model user {
+  id       Int     @id @default(autoincrement())
+  email    String  @unique(map: "user_email_key")
+  name     String?
+  password String?
+  alugarFilme alugarFilme[]
+  is_admin Boolean @default(false)
+  image String?
+}
+ex da licao api completa
